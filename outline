@@ -1,0 +1,58 @@
+Decomposition Outline
+Name: Jiaqing Mo
+CPE357-09
+
+main(int argc, char* argv[]){
+   switches:
+   from the beginning of argv[], if argv[i][0] is '-'
+      if it is "-a", turn on the switch a.
+      if it is "-l", turn on the switch l.
+   
+   for the rest arguments (dir)
+      recursively print each file in the directory
+      open(dir, 0);   
+}
+
+data structure: 
+   Store all filenames in the directory in an array of char pointers. 
+   To prevent running out of file descriptors, after storing file names in the array, close the directory.
+   Then start printing filenames/recursively call the function. In this way, the number of file descriptor is always one 
+   while traversing the directory tree.
+
+helper functions:
+   void* checked_malloc(size_t);
+   void* checked_realloc(void* p, size_t);
+   void freeArr(char* strArr[]); //free everything in the array, and free the whole array.
+
+   /*Recursive function to print out filenames, the depth argument is the depth of the tree for printing formatting.*/
+   void open(dir, depth);
+      Dirent* dp;
+      DIR* dirp;
+      int size=0;
+      int length = 0;
+      char* strArr[];
+      if filename is NULL or the length of filename is 0, return;
+      open the directory, dirp is the pointer to the directory opened.
+      if open is not successful (not a directory), then print the filename and exit.//base case
+      malloc a size of 10 strArr for storing filenames.
+      while ((dp = readdir(dirp))){ //each dirent
+         if there is no more space to store filename, realloc.
+         store each filename (dp->name) into strArr.
+         length++;
+      }
+      strArr[length] = NULL; //NULL terminate
+      close the directory.
+      sort(strArr); //sort filenames 
+      i = 0
+      while (strArr[i]){ //go through each filename
+         open(strArr[i],depth+1); 
+         i++;
+      }
+      freeArr(strArr);
+      return;
+   }
+
+
+Testing:
+   data structure: print out everything after constructing the array.
+   file descriptor: testing with deep and contrived directory structures, and limit the number of open files.
